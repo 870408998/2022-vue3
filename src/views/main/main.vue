@@ -43,6 +43,7 @@ export default defineComponent({
 </script>
 
 <style scoped lang="less">
+
 .main {
   position: fixed;
   top: 0;

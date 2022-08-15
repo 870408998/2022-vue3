@@ -19,7 +19,7 @@ for (const [key, component] of Object.entries(ElementPlusIconsVue)) {
 
 app.use(ElementPlus);
 app.use(store);
-app.use(router);
 setupStore();
+app.use(router);
 
 app.mount("#app");

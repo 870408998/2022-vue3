@@ -1,44 +1,72 @@
 <template>
-  <div>
-    <el-form label-width="100px">
+  <div class="gx-form">
+    <el-form :label-width="labelWidth">
       <el-row>
-        <el-col :span="8">
-          <el-form-item label="用户名">
-            <el-input />
-          </el-form-item>
-        </el-col>
-        <el-col :span="8">
-          <el-form-item label="密码">
-            <el-input show-password />
-          </el-form-item>
-        </el-col>
-        <el-col :span="8">
-          <el-form-item label="运动">
-            <el-select style="width: 100%">
-              <el-option>篮球</el-option>
-              <el-option>足球</el-option>
-            </el-select>
-          </el-form-item>
-        </el-col>
-        <el-col :span="8">
-          <el-form-item label="运动">
-            <el-date-picker style="width: 100%"></el-date-picker>
-          </el-form-item>
-        </el-col>
+        <template v-for="item in formItems" :key="item.label">
+          <el-col v-bind="colLayout">
+            <el-form-item
+              :label="item.label"
+              :rules="item.rules"
+              :style="itemLayout"
+            >
+              <template
+                v-if="item.type === 'input' || item.type === 'password'"
+              >
+                <el-input
+                  :placeholder="item.placeholder"
+                  :show-password="item.type === 'password'"
+                />
+              </template>
+              <template v-else-if="item.type === 'select'">
+                <el-select :placeholder="item.placeholder" style="width: 100%">
+                  <el-option
+                    v-for="option in item.options"
+                    :value="option.value"
+                    :key="option.value"
+                  >
+                    {{ option.title }}
+                  </el-option>
+                </el-select>
+              </template>
+              <template v-else-if="item.type === 'datepicker'">
+                <el-date-picker v-bind="item.otherOptions"> </el-date-picker>
+              </template>
+            </el-form-item>
+          </el-col>
+        </template>
       </el-row>
     </el-form>
   </div>
 </template>
 
 <script lang="ts">
-import { defineComponent, PropType } from "vue";
+import { defineComponent } from "vue";
+import type * as vueSet from "vue";
 import type { IFormItem } from "../types";
 
 export default defineComponent({
   props: {
     formItems: {
-      type: Array as PropType<IFormItem[]>,
+      type: Array as vueSet.PropType<IFormItem[]>,
       default: () => [],
+    },
+    labelWidth: {
+      type: String,
+      default: "100px",
+    },
+    itemLayout: {
+      type: Object,
+      default: () => ({ padding: "10px 40px" }),
+    },
+    colLayout: {
+      type: Object,
+      default: () => ({
+        xl: 6, // >1920px 4个
+        lg: 8,
+        md: 12,
+        sm: 24,
+        xs: 24,
+      }),
     },
   },
   setup() {
@@ -47,4 +75,8 @@ export default defineComponent({
 });
 </script>
 
-<style scoped></style>
+<style scoped>
+.gx-form {
+  padding-top: 22px;
+}
+</style>
