@@ -1,3 +1,4 @@
+import type { IBreadcrumb } from "@/base-ui/breadcrumb";
 import type { RouteRecordRaw } from "vue-router";
 
 let firstMenu: any = null;
@@ -15,7 +16,7 @@ export function mapMenusToRoutes(userMenus: any[]): RouteRecordRaw[] {
   //   const route = require('../router/main' + key.split('.')[1])
   //   allRoutes.push(route.default)
   // })
-  Object.values(routeFiles).forEach((key) => {
+  Object.values(routeFiles).forEach((key: any) => {
     allRoutes.push(key.default);
   });
 
@@ -42,11 +43,24 @@ export function mapMenusToRoutes(userMenus: any[]): RouteRecordRaw[] {
   return routes;
 }
 
-export function pathMapToMenu(userMenus: any[], currentPath: string): any {
+export function pathMapBreadcrumbs(userMenus: any[], currentPath: string) {
+  const breadcrumbs: IBreadcrumb[] = [];
+  pathMapToMenu(userMenus, currentPath, breadcrumbs);
+  return breadcrumbs;
+}
+
+// /main/system/role  -> type === 2 对应menu
+export function pathMapToMenu(
+  userMenus: any[],
+  currentPath: string,
+  breadcrumbs?: IBreadcrumb[]
+): any {
   for (const menu of userMenus) {
     if (menu.type === 1) {
       const findMenu = pathMapToMenu(menu.children ?? [], currentPath);
       if (findMenu) {
+        breadcrumbs?.push({ name: menu.name });
+        breadcrumbs?.push({ name: findMenu.name });
         return findMenu;
       }
     } else if (menu.type === 2 && menu.url === currentPath) {
@@ -54,5 +68,38 @@ export function pathMapToMenu(userMenus: any[], currentPath: string): any {
     }
   }
 }
+
+// export function pathMapBreadcrumbs(userMenus: any[], currentPath: string) {
+//   const breadcrumbs: IBreadcrumb[] = []
+
+//   for (const menu of userMenus) {
+//     if (menu.type === 1) {
+//       const findMenu = pathMapToMenu(menu.children ?? [], currentPath)
+//       if (findMenu) {
+//         breadcrumbs.push({ name: menu.name, path: menu.url })
+//         breadcrumbs.push({ name: findMenu.name, path: findMenu.url })
+//         return findMenu
+//       }
+//     } else if (menu.type === 2 && menu.url === currentPath) {
+//       return menu
+//     }
+//   }
+
+//   return breadcrumbs
+// }
+
+// // /main/system/role  -> type === 2 对应menu
+// export function pathMapToMenu(userMenus: any[], currentPath: string): any {
+//   for (const menu of userMenus) {
+//     if (menu.type === 1) {
+//       const findMenu = pathMapToMenu(menu.children ?? [], currentPath)
+//       if (findMenu) {
+//         return findMenu
+//       }
+//     } else if (menu.type === 2 && menu.url === currentPath) {
+//       return menu
+//     }
+//   }
+// }
 
 export { firstMenu };
